@@ -6,13 +6,20 @@ resource aws_autoscaling_group main {
 	vpc_zone_identifier = var.subnet_ids
 	min_size = var.min_size
 	max_size = var.max_size
-	# protect_from_scale_in = true
-	# suspended_processes = [ "AZRebalance" ]	# TODO: Test AZRebalance
+	protect_from_scale_in = var.protect_from_scale_in
+	suspended_processes = var.suspended_processes
 	
-	# initial_lifecycle_hook {
-	# 	name = "worker_ready"
-	# 	lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
-	# }
+	dynamic initial_lifecycle_hook {
+		for_each = var.lifecycle_hooks
+		
+		content {
+			name = initial_lifecycle_hook.value.name
+			lifecycle_transition = {
+				launching = "autoscaling:EC2_INSTANCE_LAUNCHING"
+				terminating = "autoscaling:EC2_INSTANCE_TERMINATING"
+			}[initial_lifecycle_hook.value.type]
+		}
+	}
 	
 	mixed_instances_policy {
 		instances_distribution {

@@ -102,6 +102,29 @@ variable max_size {
 	type = number
 }
 
+variable protect_from_scale_in {
+	description = "Enable scale in protection."
+	type = bool
+	default = false
+}
+
+variable suspended_processes {
+	description = "Set of suspended auto scaling processes."
+	type = set( string )
+	default = []
+}
+
+variable lifecycle_hooks {
+	description = "Lifecycle hooks."
+	type = set(
+		object( {
+			name = string
+			type = string
+		} )
+	)
+	default = []
+}
+
 
 
 # 
