@@ -50,7 +50,6 @@ variable user_data_base64 {
 	default = null
 }
 
-
 variable role_policies {
 	description = "Policy for the IAM instance profile."
 	type = set(
@@ -101,4 +100,13 @@ variable min_size {
 variable max_size {
 	description = "Maximum number of instances."
 	type = number
+}
+
+
+
+# 
+# Locals
+#-------------------------------------------------------------------------------
+locals {
+	auto_scaling_group_name = var.prefix
 }

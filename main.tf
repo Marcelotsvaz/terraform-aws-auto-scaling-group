@@ -2,7 +2,7 @@
 # Auto Scaling Group
 #-------------------------------------------------------------------------------
 resource aws_autoscaling_group main {
-	name = var.prefix
+	name = local.auto_scaling_group_name
 	vpc_zone_identifier = var.subnet_ids
 	min_size = var.min_size
 	max_size = var.max_size
