@@ -38,6 +38,12 @@ variable min_memory_gib {
 	default = null
 }
 
+variable max_instance_price {
+	description = "Maximum spot instance price."
+	type = number
+	default = null
+}
+
 variable ami_id {
 	description = "AMI ID."
 	type = string

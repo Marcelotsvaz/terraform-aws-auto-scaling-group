@@ -25,7 +25,6 @@ resource aws_autoscaling_group main {
 		instances_distribution {
 			on_demand_percentage_above_base_capacity = 0	# Use only spot instances.
 			spot_allocation_strategy = "price-capacity-optimized"
-			spot_max_price = 0.025
 		}
 		
 		launch_template {
@@ -52,7 +51,7 @@ resource aws_launch_template main {
 	name = var.prefix
 	update_default_version = true
 	
-	# Configuration.
+	# Instance requirements.
 	instance_type = var.instance_type
 	# instance_requirements {
 	# 	allowed_instance_types = data.aws_ec2_instance_types.main.instance_types
@@ -60,6 +59,13 @@ resource aws_launch_template main {
 	# 	vcpu_count { min = var.min_vcpu_count }
 	# 	memory_mib { min = var.min_memory_gib * 1024 }
 	# }
+	instance_market_options {
+		spot_options {
+			max_price = var.max_instance_price
+		}
+	}
+	
+	# Configuration.
 	image_id = coalesce( var.ami_id, data.aws_ami.main.id )
 	user_data = var.user_data_base64
 	iam_instance_profile { arn = aws_iam_instance_profile.main.arn }
