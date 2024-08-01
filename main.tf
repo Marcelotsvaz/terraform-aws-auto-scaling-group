@@ -61,7 +61,9 @@ resource aws_launch_template main {
 	# }
 	instance_market_options {
 		spot_options {
+			# spot_options drifts when max_price is null and is the only parameter in the block.
 			max_price = var.max_instance_price
+			instance_interruption_behavior = "terminate"
 		}
 	}
 	
