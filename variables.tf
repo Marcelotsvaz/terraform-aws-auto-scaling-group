@@ -18,12 +18,23 @@ variable prefix {
 
 
 # 
-# Configuration
+# Instance Requirements
 #-------------------------------------------------------------------------------
 variable instance_type {
 	description = "Instance type."
 	type = string
-	default = "t3a.small"	# TODO
+	default = null
+	validation {
+		condition = (
+			var.instance_type != null
+			&& var.min_vcpu_count == null
+			&& var.min_memory_gib == null
+		) || (
+			var.instance_type == null
+			&& ( var.min_vcpu_count != null || var.min_memory_gib != null )
+		)
+		error_message = "Either `instance_type` or one instance requirement must be provided."
+	}
 }
 
 variable min_vcpu_count {
@@ -38,12 +49,22 @@ variable min_memory_gib {
 	default = null
 }
 
+variable burstable {
+	description = "Whether to include burstable instance types."
+	type = string
+	default = "included"
+}
+
 variable max_instance_price {
 	description = "Maximum spot instance price."
 	type = number
 	default = null
 }
 
+
+# 
+# Configuration
+#-------------------------------------------------------------------------------
 variable ami_id {
 	description = "AMI ID."
 	type = string

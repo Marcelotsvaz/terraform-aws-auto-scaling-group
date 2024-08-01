@@ -53,12 +53,16 @@ resource aws_launch_template main {
 	
 	# Instance requirements.
 	instance_type = var.instance_type
-	# instance_requirements {
-	# 	allowed_instance_types = data.aws_ec2_instance_types.main.instance_types
-	# 	burstable_performance = "included"
-	# 	vcpu_count { min = var.min_vcpu_count }
-	# 	memory_mib { min = var.min_memory_gib * 1024 }
-	# }
+	dynamic instance_requirements {
+		for_each = var.instance_type == null ? [ true ] : []
+		
+		content {
+			vcpu_count { min = coalesce( var.min_vcpu_count, 1 ) }
+			memory_mib { min = try( var.min_memory_gib * 1024, 1 ) }
+			burstable_performance = var.burstable
+			allowed_instance_types = data.aws_ec2_instance_types.main.instance_types
+		}
+	}
 	instance_market_options {
 		spot_options {
 			# spot_options drifts when max_price is null and is the only parameter in the block.
@@ -108,6 +112,24 @@ resource aws_launch_template main {
 	
 	tags = {
 		Name = "${var.name} Launch Template"
+	}
+}
+
+
+data aws_ec2_instance_types main {
+	filter {
+		name = "supported-boot-mode"
+		values = [ "uefi" ]
+	}
+	
+	filter {
+		name = "supported-usage-class"
+		values = [ "spot" ]
+	}
+	
+	filter {
+		name = "processor-info.supported-architecture"
+		values = [ "x86_64" ]
 	}
 }
 
