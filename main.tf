@@ -24,7 +24,9 @@ resource aws_autoscaling_group main {
 	mixed_instances_policy {
 		instances_distribution {
 			on_demand_percentage_above_base_capacity = 0	# Use only spot instances.
+			on_demand_allocation_strategy = "lowest-price"	# Required for instance requirements.
 			spot_allocation_strategy = "price-capacity-optimized"
+			spot_max_price = var.max_instance_price
 		}
 		
 		launch_template {
@@ -61,13 +63,6 @@ resource aws_launch_template main {
 			memory_mib { min = try( var.min_memory_gib * 1024, 1 ) }
 			burstable_performance = var.burstable
 			allowed_instance_types = data.aws_ec2_instance_types.main.instance_types
-		}
-	}
-	instance_market_options {
-		spot_options {
-			# spot_options drifts when max_price is null and is the only parameter in the block.
-			max_price = var.max_instance_price
-			instance_interruption_behavior = "terminate"
 		}
 	}
 	
