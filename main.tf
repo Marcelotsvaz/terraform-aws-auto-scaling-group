@@ -159,41 +159,9 @@ data aws_ami main {
 #-------------------------------------------------------------------------------
 resource aws_iam_instance_profile main {
 	name = var.prefix
-	role = aws_iam_role.main.name
+	role = var.role_name
 	
 	tags = {
 		Name = "${var.name} Instance Profile"
-	}
-}
-
-
-resource aws_iam_role main {
-	name = var.prefix
-	assume_role_policy = data.aws_iam_policy_document.assume_role.json
-	managed_policy_arns = []
-	
-	dynamic inline_policy {
-		for_each = var.role_policies
-		
-		content {
-			name = inline_policy.value.policy_id
-			policy = inline_policy.value.json
-		}
-	}
-	
-	tags = {
-		Name = "${var.name} Role"
-	}
-}
-
-
-data aws_iam_policy_document assume_role {
-	statement {
-		sid = "ec2AssumeRole"
-		principals {
-			type = "Service"
-			identifiers = [ "ec2.amazonaws.com" ]
-		}
-		actions = [ "sts:AssumeRole" ]
 	}
 }
