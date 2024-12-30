@@ -6,6 +6,7 @@ resource aws_autoscaling_group main {
 	vpc_zone_identifier = var.subnet_ids
 	min_size = var.min_size
 	max_size = var.max_size
+	desired_capacity = var.desired_capacity
 	protect_from_scale_in = var.protect_from_scale_in
 	suspended_processes = var.suspended_processes
 	

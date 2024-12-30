@@ -129,6 +129,12 @@ variable max_size {
 	type = number
 }
 
+variable desired_capacity {
+	description = "Desired number of instances."
+	type = number
+	default = null
+}
+
 variable protect_from_scale_in {
 	description = "Enable scale in protection."
 	type = bool
